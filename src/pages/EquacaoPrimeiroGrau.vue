@@ -4,6 +4,8 @@
       <q-input
         label="Equação do 1° grau"
         v-model="form.equacao"
+        lazy-rules
+        :rules="[val => (val && val.length > 0) || 'É obrigatório inserir uma equação!']"
       />
 
       <q-btn
@@ -12,18 +14,20 @@
       />
     </q-form>
     <div class="q-ma-md" v-if="resultado && objIncognita.incognita[0]">
-      {{ resultado }}
-      {{ objIncognita.incognita[0] }}
+      {{ objIncognita.incognita[0] }}  =  {{ resultado }}
     </div>
   </q-page>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue'
+import useNotify from 'src/composables/UseNotify'
 
 export default defineComponent({
   name: 'EquacaoPrimeiroGrauPage',
   setup () {
+    const { notifyError, notifySuccess } = useNotify()
+
     const form = ref({
       equacao: ''
     })
@@ -50,93 +54,115 @@ export default defineComponent({
       incognita: []
     })
 
+    const erro = ref(true)
+
     const resolveEquacao = () => {
       resolveEquacaoParcial()
       resultado.value = (
         (somaElementosSemIncognita.value.d - somaElementosSemIncognita.value.e) /
         (somaElementosComIncognita.value.e - somaElementosComIncognita.value.d)
       )
+      if (!erro.value) {
+        notifySuccess('Equação resolvida com sucesso!')
+      }
     }
 
-    const resolveEquacaoParcial = () => {
-      const elementosComIncognitaE = []
-      const elementosSemIncognitaE = []
+    const resolveEquacaoParcial = async () => {
+      try {
+        const elementosComIncognitaE = []
+        const elementosSemIncognitaE = []
 
-      const elementosComIncognitaD = []
-      const elementosSemIncognitaD = []
+        const elementosComIncognitaD = []
+        const elementosSemIncognitaD = []
 
-      const equacao = form.value.equacao
-      descobreIncognita(equacao)
+        const equacao = form.value.equacao
+        descobreIncognita(equacao)
 
-      const incognita = objIncognita.value.incognita
-
-      const [ladoE, ladoD] = equacao.split('=')
-
-      // --------------------------------------------- LADO ESQUERDO ------------------------------------------------------------------------
-
-      const elementosSemSinaisE = []
-      const elementosLadoE = ladoE.split(' ')
-
-      elementosLadoE.forEach((elemento, index, array) => {
-        if (elemento === '') {
-          array.splice(index, 1)
+        if (objIncognita.value.incognita.length > 1) {
+          console.log('ent')
+          notifyError('Só pode existir uma incógnita por equação do primeiro grau...')
+          return
         }
-      })
 
-      elementosLadoE.forEach((elemento, index, array) => {
-        descobreSinal(elemento, index, array, incognita, elementosSemSinaisE)
-      })
-
-      elementosSemSinaisE.forEach((elemento) => {
-        possuiIncognita(elemento, incognita, elementosComIncognitaE, elementosSemIncognitaE)
-      })
-
-      const somaElementosSemIncognitaE = elementosSemIncognitaE.reduce((prev, cur) => {
-        return parseFloat(prev) + parseFloat(cur)
-      }, 0)
-      somaElementosSemIncognita.value.e = somaElementosSemIncognitaE
-
-      const somaElementosComIncognitaE = elementosComIncognitaE.reduce((prev, cur) => {
-        return parseFloat(prev) + parseFloat(cur)
-      }, 0)
-      somaElementosComIncognita.value.e = somaElementosComIncognitaE
-
-      // -----------------------------------------------------------------------------------------------------------------------------------
-
-      // --------------------------------------------- LADO DIREITO ------------------------------------------------------------------------
-
-      const elementosSemSinaisD = []
-      const elementosLadoD = ladoD.split(' ')
-
-      elementosLadoD.forEach((elemento, index, array) => {
-        if (elemento === '') {
-          array.splice(index, 1)
+        if (objIncognita.value.incognita.length === 0) {
+          console.log('ent1')
+          notifyError('Insira uma incógnita na equação!')
+          return
         }
-      })
 
-      elementosLadoD.forEach((elemento, index, array) => {
-        descobreSinal(elemento, index, array, incognita, elementosSemSinaisD)
-      })
+        const incognita = objIncognita.value.incognita
 
-      elementosSemSinaisD.forEach((elemento) => {
-        possuiIncognita(elemento, incognita, elementosComIncognitaD, elementosSemIncognitaD)
-      })
+        const [ladoE, ladoD] = equacao.split('=')
 
-      const somaElementosSemIncognitaD = elementosSemIncognitaD.reduce((prev, cur) => {
-        return parseFloat(prev) + parseFloat(cur)
-      }, 0)
-      somaElementosSemIncognita.value.d = somaElementosSemIncognitaD
+        // --------------------------------------------- LADO ESQUERDO ------------------------------------------------------------------------
 
-      const somaElementosComIncognitaD = elementosComIncognitaD.reduce((prev, cur) => {
-        if (cur === incognita) {
-          cur = 1
-        }
-        if (cur === '-' + incognita) {
-          cur = -1
-        }
-        return parseFloat(prev) + parseFloat(cur)
-      }, 0)
-      somaElementosComIncognita.value.d = somaElementosComIncognitaD
+        const elementosSemSinaisE = []
+        const elementosLadoE = ladoE.split(' ')
+
+        elementosLadoE.forEach((elemento, index, array) => {
+          if (elemento === '') {
+            array.splice(index, 1)
+          }
+        })
+
+        elementosLadoE.forEach((elemento, index, array) => {
+          descobreSinal(elemento, index, array, incognita, elementosSemSinaisE)
+        })
+
+        elementosSemSinaisE.forEach((elemento) => {
+          possuiIncognita(elemento, incognita, elementosComIncognitaE, elementosSemIncognitaE)
+        })
+
+        const somaElementosSemIncognitaE = elementosSemIncognitaE.reduce((prev, cur) => {
+          return parseFloat(prev) + parseFloat(cur)
+        }, 0)
+        somaElementosSemIncognita.value.e = somaElementosSemIncognitaE
+
+        const somaElementosComIncognitaE = elementosComIncognitaE.reduce((prev, cur) => {
+          return parseFloat(prev) + parseFloat(cur)
+        }, 0)
+        somaElementosComIncognita.value.e = somaElementosComIncognitaE
+
+        // -----------------------------------------------------------------------------------------------------------------------------------
+
+        // --------------------------------------------- LADO DIREITO ------------------------------------------------------------------------
+
+        const elementosSemSinaisD = []
+        const elementosLadoD = ladoD.split(' ')
+
+        elementosLadoD.forEach((elemento, index, array) => {
+          if (elemento === '') {
+            array.splice(index, 1)
+          }
+        })
+
+        elementosLadoD.forEach((elemento, index, array) => {
+          descobreSinal(elemento, index, array, incognita, elementosSemSinaisD)
+        })
+
+        elementosSemSinaisD.forEach((elemento) => {
+          possuiIncognita(elemento, incognita, elementosComIncognitaD, elementosSemIncognitaD)
+        })
+
+        const somaElementosSemIncognitaD = elementosSemIncognitaD.reduce((prev, cur) => {
+          return parseFloat(prev) + parseFloat(cur)
+        }, 0)
+        somaElementosSemIncognita.value.d = somaElementosSemIncognitaD
+
+        const somaElementosComIncognitaD = elementosComIncognitaD.reduce((prev, cur) => {
+          if (cur === incognita) {
+            cur = 1
+          }
+          if (cur === '-' + incognita) {
+            cur = -1
+          }
+          return parseFloat(prev) + parseFloat(cur)
+        }, 0)
+        somaElementosComIncognita.value.d = somaElementosComIncognitaD
+        erro.value = false
+      } catch (error) {
+        notifyError(error.message)
+      }
 
       // -----------------------------------------------------------------------------------------------------------------------------------
     }
