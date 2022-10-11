@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center">
-    <q-form @submit.prevent="resolveEquacaoParcial">
+    <q-form @submit.prevent="resolveEquacao">
       <q-input
         label="Equação do 1° grau"
         v-model="form.equacao"
@@ -11,6 +11,8 @@
         type="submit"
       />
     </q-form>
+    {{ resultado }}
+    {{ objIncognita.incognita }}
   </q-page>
 </template>
 
@@ -24,16 +26,48 @@ export default defineComponent({
       equacao: ''
     })
 
-    const elementosComIncognitaE = []
-    const elementosSemIncognitaE = []
-    // const elementosComIncognitaD = []
+    const somaElementosSemIncognita = ref({
+      e: '',
+      d: ''
+    })
+
+    const somaElementosComIncognita = ref({
+      e: '',
+      d: ''
+    })
+
+    const resultado = ref('')
+
+    const alfabeto = [
+      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'w', 'x', 'y', 'z',
+      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z'
+    ]
+
+    const objIncognita = ref({
+      temIncognita: false,
+      incognita: []
+    })
 
     const resolveEquacao = () => {
-
+      resolveEquacaoParcial()
+      resultado.value = (
+        (somaElementosSemIncognita.value.d - somaElementosSemIncognita.value.e) /
+        (somaElementosComIncognita.value.e - somaElementosComIncognita.value.d)
+      )
     }
 
     const resolveEquacaoParcial = () => {
+      const elementosComIncognitaE = []
+      const elementosSemIncognitaE = []
+
+      const elementosComIncognitaD = []
+      const elementosSemIncognitaD = []
+
       const equacao = form.value.equacao
+      descobreIncognita(equacao)
+
+      const incognita = objIncognita.value.incognita
+
       const [ladoE, ladoD] = equacao.split('=')
 
       // --------------------------------------------- LADO ESQUERDO ------------------------------------------------------------------------
@@ -48,20 +82,61 @@ export default defineComponent({
       })
 
       elementosLadoE.forEach((elemento, index, array) => {
-        descobreSinal(elemento, index, array, 'x', elementosSemSinaisE)
+        descobreSinal(elemento, index, array, incognita, elementosSemSinaisE)
       })
 
       elementosSemSinaisE.forEach((elemento) => {
-        possuiIncognita(elemento, 'x', elementosComIncognitaE, elementosSemIncognitaE)
+        possuiIncognita(elemento, incognita, elementosComIncognitaE, elementosSemIncognitaE)
       })
 
-      console.log(elementosComIncognitaE)
-      console.log(elementosSemIncognitaE)
+      const somaElementosSemIncognitaE = elementosSemIncognitaE.reduce((prev, cur) => {
+        return parseFloat(prev) + parseFloat(cur)
+      }, 0)
+      somaElementosSemIncognita.value.e = somaElementosSemIncognitaE
 
-      // --------------------------------------------------------------------------------------------------------------------------------------
+      const somaElementosComIncognitaE = elementosComIncognitaE.reduce((prev, cur) => {
+        return parseFloat(prev) + parseFloat(cur)
+      }, 0)
+      somaElementosComIncognita.value.e = somaElementosComIncognitaE
 
+      // -----------------------------------------------------------------------------------------------------------------------------------
+
+      // --------------------------------------------- LADO DIREITO ------------------------------------------------------------------------
+
+      const elementosSemSinaisD = []
       const elementosLadoD = ladoD.split(' ')
-      console.log(elementosLadoD)
+
+      elementosLadoD.forEach((elemento, index, array) => {
+        if (elemento === '') {
+          array.splice(index, 1)
+        }
+      })
+
+      elementosLadoD.forEach((elemento, index, array) => {
+        descobreSinal(elemento, index, array, incognita, elementosSemSinaisD)
+      })
+
+      elementosSemSinaisD.forEach((elemento) => {
+        possuiIncognita(elemento, incognita, elementosComIncognitaD, elementosSemIncognitaD)
+      })
+
+      const somaElementosSemIncognitaD = elementosSemIncognitaD.reduce((prev, cur) => {
+        return parseFloat(prev) + parseFloat(cur)
+      }, 0)
+      somaElementosSemIncognita.value.d = somaElementosSemIncognitaD
+
+      const somaElementosComIncognitaD = elementosComIncognitaD.reduce((prev, cur) => {
+        if (cur === incognita) {
+          cur = 1
+        }
+        if (cur === '-' + incognita) {
+          cur = -1
+        }
+        return parseFloat(prev) + parseFloat(cur)
+      }, 0)
+      somaElementosComIncognita.value.d = somaElementosComIncognitaD
+
+      // -----------------------------------------------------------------------------------------------------------------------------------
     }
 
     const possuiIncognita = (elemento, incognita, arrayComIncognita, arraySemIncognita) => {
@@ -86,10 +161,21 @@ export default defineComponent({
       }
     }
 
+    const descobreIncognita = (string) => {
+      objIncognita.value.incognita = []
+      alfabeto.forEach((letra) => {
+        if (string.indexOf(letra) > -1) {
+          objIncognita.value.temIncognita = true
+          objIncognita.value.incognita.push(letra)
+        }
+      })
+    }
+
     return {
       form,
       resolveEquacao,
-      resolveEquacaoParcial
+      resultado,
+      objIncognita
     }
   }
 })
