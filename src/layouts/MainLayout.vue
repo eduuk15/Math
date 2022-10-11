@@ -15,8 +15,6 @@
             Math
         </q-toolbar-title>
 
-        <dark-mode-toggle />
-
       </q-toolbar>
     </q-header>
 
