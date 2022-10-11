@@ -1,6 +1,6 @@
 <template>
-  <q-page class="flex flex-center w-4">
-    <q-form class="w-3" @submit.prevent="resolveEquacao">
+  <q-page class="flex flex-center">
+    <q-form @submit.prevent="resolveEquacao">
       <q-input
         label="Equação do 1° grau"
         v-model="form.equacao"
@@ -11,7 +11,7 @@
         type="submit"
       />
     </q-form>
-    <div class="q-ma-md absolute float-bottom" v-if="resultado && objIncognita.incognita[0]">
+    <div class="q-ma-md" v-if="resultado && objIncognita.incognita[0]">
       {{ resultado }}
       {{ objIncognita.incognita[0] }}
     </div>
