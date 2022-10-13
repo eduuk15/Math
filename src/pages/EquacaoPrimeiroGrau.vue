@@ -62,6 +62,10 @@ export default defineComponent({
         (somaElementosSemIncognita.value.d - somaElementosSemIncognita.value.e) /
         (somaElementosComIncognita.value.e - somaElementosComIncognita.value.d)
       )
+      if (isNaN(resultado.value)) {
+        notifyError('Não foi possível resolver a equação!')
+        return
+      }
       if (!erro.value) {
         notifySuccess('Equação resolvida com sucesso!')
       }
