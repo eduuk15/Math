@@ -69,6 +69,7 @@ export default defineComponent({
 
     const resolveEquacaoParcial = async () => {
       try {
+        erro.value = true
         const elementosComIncognitaE = []
         const elementosSemIncognitaE = []
 
@@ -78,21 +79,29 @@ export default defineComponent({
         const equacao = form.value.equacao
         descobreIncognita(equacao)
 
+        if (equacao.indexOf('=') <= -1) {
+          notifyError('Insira o sinal de igualdade(=) para resolver a equação!')
+          return
+        }
+
+        const [ladoE, ladoD] = equacao.split('=')
+
+        if (ladoE === '' || ladoD === '') {
+          notifyError('Os dois "lados" da equação devem ser preenchidos!')
+          return
+        }
+
         if (objIncognita.value.incognita.length > 1) {
-          console.log('ent')
-          notifyError('Só pode existir uma incógnita por equação do primeiro grau...')
+          notifyError('Só pode existir uma incógnita por equação!')
           return
         }
 
         if (objIncognita.value.incognita.length === 0) {
-          console.log('ent1')
           notifyError('Insira uma incógnita na equação!')
           return
         }
 
         const incognita = objIncognita.value.incognita
-
-        const [ladoE, ladoD] = equacao.split('=')
 
         // --------------------------------------------- LADO ESQUERDO ------------------------------------------------------------------------
 
@@ -159,12 +168,18 @@ export default defineComponent({
           return parseFloat(prev) + parseFloat(cur)
         }, 0)
         somaElementosComIncognita.value.d = somaElementosComIncognitaD
+
+        // -----------------------------------------------------------------------------------------------------------------------------------
+
+        if (elementosLadoE[0] === '' || elementosLadoD[0] === '') {
+          notifyError('Os dois "lados" da equação devem ser preenchidos!')
+          return
+        }
+
         erro.value = false
       } catch (error) {
         notifyError(error.message)
       }
-
-      // -----------------------------------------------------------------------------------------------------------------------------------
     }
 
     const possuiIncognita = (elemento, incognita, arrayComIncognita, arraySemIncognita) => {
