@@ -129,11 +129,11 @@ export default defineComponent({
         })
 
         elementosLadoE.forEach((elemento, index, array) => {
-          descobreSinal(elemento, index, array, incognita, elementosSemSinaisE)
+          descobreSinal(elemento, index, array, incognita[0], elementosSemSinaisE)
         })
 
         elementosSemSinaisE.forEach((elemento) => {
-          possuiIncognita(elemento, incognita, elementosComIncognitaE, elementosSemIncognitaE)
+          possuiIncognita(elemento, incognita[0], elementosComIncognitaE, elementosSemIncognitaE)
         })
 
         const somaElementosSemIncognitaE = elementosSemIncognitaE.reduce((prev, cur) => {
@@ -142,6 +142,12 @@ export default defineComponent({
         somaElementosSemIncognita.value.e = somaElementosSemIncognitaE
 
         const somaElementosComIncognitaE = elementosComIncognitaE.reduce((prev, cur) => {
+          if (cur === incognita[0]) {
+            cur = 1
+          }
+          if (cur === '-' + incognita[0]) {
+            cur = -1
+          }
           return parseFloat(prev) + parseFloat(cur)
         }, 0)
         somaElementosComIncognita.value.e = somaElementosComIncognitaE
@@ -160,11 +166,11 @@ export default defineComponent({
         })
 
         elementosLadoD.forEach((elemento, index, array) => {
-          descobreSinal(elemento, index, array, incognita, elementosSemSinaisD)
+          descobreSinal(elemento, index, array, incognita[0], elementosSemSinaisD)
         })
 
         elementosSemSinaisD.forEach((elemento) => {
-          possuiIncognita(elemento, incognita, elementosComIncognitaD, elementosSemIncognitaD)
+          possuiIncognita(elemento, incognita[0], elementosComIncognitaD, elementosSemIncognitaD)
         })
 
         const somaElementosSemIncognitaD = elementosSemIncognitaD.reduce((prev, cur) => {
@@ -173,10 +179,10 @@ export default defineComponent({
         somaElementosSemIncognita.value.d = somaElementosSemIncognitaD
 
         const somaElementosComIncognitaD = elementosComIncognitaD.reduce((prev, cur) => {
-          if (cur === incognita) {
+          if (cur === incognita[0]) {
             cur = 1
           }
-          if (cur === '-' + incognita) {
+          if (cur === '-' + incognita[0]) {
             cur = -1
           }
           return parseFloat(prev) + parseFloat(cur)
