@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated class="bg-[#1e3a8a] text-[#e5e7eb]">
       <q-toolbar>
         <q-btn
           flat
@@ -8,24 +8,27 @@
           round
           icon="menu"
           aria-label="Menu"
+          color="[#e5e7eb]"
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title>
-            Math
+        <q-toolbar-title class="text-2xl">
+            Math <i class="fa-solid fa-square-root-variable"></i>
         </q-toolbar-title>
 
       </q-toolbar>
     </q-header>
 
     <q-drawer
+      class="bg-[#1e3a8a]"
       v-model="leftDrawerOpen"
       show-if-above
       bordered
     >
-      <q-list>
+      <q-list class="text-[#e5e7eb]">
         <q-item-label
           header
+          class="text-[#e5e7eb]"
         >
           Menu
         </q-item-label>

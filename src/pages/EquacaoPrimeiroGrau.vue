@@ -1,27 +1,29 @@
 <template>
-  <q-page class="relative">
+  <q-page class="relative bg-[#1f2937]">
     <div class="flex items-center justify-center">
         <q-form class="absolute top-32" @submit.prevent="resolveEquacao">
           <q-input
-            input-class="text-center w-80"
-            label="Equação do 1° grau"
-            hint="Sempre separe os elementos por um espaço..."
+            label-color="[#e5e7eb]"
+            input-class="text-center w-80 text-[#e5e7eb]"
+            label="Equação"
             v-model="form.equacao"
             lazy-rules
             :rules="[val => (val && val.length > 0) || 'É obrigatório inserir uma equação!']"
             item-aligned
           />
 
+        <div class="flex items-center justify-center mt-8">
           <q-btn
-            class="ml-16 mt-10 w-2/3"
+            class="w-2/3 bg-[#1e3a8a] text-[#e5e7eb]"
             label="Resolver!"
             type="submit"
           />
-        </q-form>
+        </div>
 
-      <div class="absolute bottom-32" v-if="resultado && objIncognita.incognita[0]">
-        {{ objIncognita.incognita[0] }}  =  {{ resultado }}
-      </div>
+          <div class="flex items-center justify-center mt-16 text-[#e5e7eb] text-lg" v-if="resultado && objIncognita.incognita[0]">
+            {{ objIncognita.incognita[0] }}  =  {{ resultado }}
+          </div>
+        </q-form>
     </div>
 
   </q-page>
