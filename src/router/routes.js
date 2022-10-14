@@ -5,7 +5,8 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: 'equacaoprimeiro', name: 'equacaoprimeiro', component: () => import('pages/EquacaoPrimeiroGrau.vue') }
+      { path: 'equacaoprimeiro', name: 'equacaoprimeiro', component: () => import('pages/EquacaoPrimeiroGrau.vue') },
+      { path: 'equacaosegundo', name: 'equacaosegundo', component: () => import('pages/EquacaoSegundoGrau.vue') }
     ]
   },
 

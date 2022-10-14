@@ -20,7 +20,7 @@
           />
         </div>
 
-          <div class="flex items-center justify-center mt-16 text-[#e5e7eb] text-lg" v-if="resultado && objIncognita.incognita[0]">
+          <div class="flex items-center justify-center mt-16 text-[#e5e7eb] text-lg" v-if="resultado !== '' && objIncognita.incognita[0]">
             {{ objIncognita.incognita[0] }}  =  {{ resultado }}
           </div>
         </q-form>

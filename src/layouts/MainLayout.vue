@@ -65,6 +65,12 @@ const linksList = [
     caption: '',
     icon: 'fa-solid fa-equals',
     routeName: 'equacaoprimeiro'
+  },
+  {
+    title: 'Equação do 2° grau',
+    caption: '',
+    icon: 'fa-solid fa-equals',
+    routeName: 'equacaosegundo'
   }
 ]
 
