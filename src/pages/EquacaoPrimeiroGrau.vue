@@ -20,9 +20,9 @@
           />
         </div>
 
-          <!-- <div class="flex items-center justify-center mt-16 text-[#e5e7eb] text-lg" v-if="resultado !== '' && objIncognita.incognita[0]">
+          <div class="flex items-center justify-center mt-16 text-[#e5e7eb] text-lg" v-if="resultado !== '' && objIncognita.incognita[0]">
             {{ objIncognita.incognita[0] }}  =  {{ resultado }}
-          </div> -->
+          </div>
         </q-form>
     </div>
 
@@ -32,80 +32,33 @@
 <script>
 import { defineComponent, ref } from 'vue'
 // import useNotify from 'src/composables/UseNotify'
+import useSoma from 'src/composables/Soma'
+import useMultiplicaOuDivide from 'src/composables/MultiplicaOuDivide'
+import useAtribuiSinal from 'src/composables/AtribuiSinal'
 
 export default defineComponent({
   name: 'EquacaoPrimeiroGrauPage',
   setup () {
     // const { notifyError, notifySuccess } = useNotify()
+    const { multiplicaOuDivide } = useMultiplicaOuDivide()
+    const { soma } = useSoma()
+    const { atribuiSinal } = useAtribuiSinal()
 
     const form = ref({
       equacao: ''
     })
-
-    const alfabeto = [
-      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'w', 'x', 'y', 'z',
-      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z'
-    ]
 
     const objIncognita = ref({
       temIncognita: false,
       incognita: []
     })
 
-    const resolveEquacao = () => {
-      const equacao = form.value.equacao
-      descobreIncognita(equacao)
-      const [ladoE, ladoD] = equacao.split('=')
+    const resultado = ref('')
 
-      const elementosLadoE = ladoE.split(' ')
-      const elementosLadoD = ladoD.split(' ')
-      resolveParenteses(elementosLadoE)
-      console.log(elementosLadoD)
-    }
-
-    const resolveParenteses = (arrayPercorrido) => {
-      const indexAbertura = arrayPercorrido.indexOf('(')
-      const indexFechamento = arrayPercorrido.indexOf(')')
-
-      const elementosParenteses = []
-
-      arrayPercorrido.forEach((elemento, index) => {
-        if (index > indexAbertura && index < indexFechamento) {
-          console.log('ent')
-          elementosParenteses.push(elemento)
-        }
-      })
-
-      const elementosParentesesSemSinal = []
-
-      elementosParenteses.forEach((elemento, index, array) => {
-        descobreSinal(elemento, index, array, objIncognita.value.incognita[0], elementosParentesesSemSinal)
-      })
-      console.log(elementosParenteses)
-      console.log(elementosParentesesSemSinal)
-    }
-
-    // const possuiIncognita = (elemento, incognita, arrayComIncognita, arraySemIncognita) => {
-    //   if (elemento.indexOf(incognita) > -1) {
-    //     arrayComIncognita.push(elemento)
-    //   } else {
-    //     arraySemIncognita.push(elemento)
-    //   }
-    // }
-
-    const descobreSinal = (elemento, index, arrayPercorrido, incognita, arraySemSinal) => {
-      if (elemento !== '+' && elemento !== '-') {
-        if (arrayPercorrido[index - 1] === '-') {
-          if (elemento.indexOf(incognita) > -1) {
-            arraySemSinal.push('-' + elemento)
-          } else {
-            arraySemSinal.push('-' + elemento)
-          }
-        } else {
-          arraySemSinal.push(elemento)
-        }
-      }
-    }
+    const alfabeto = [
+      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'w', 'x', 'y', 'z',
+      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z'
+    ]
 
     const descobreIncognita = (string) => {
       objIncognita.value.incognita = []
@@ -117,29 +70,34 @@ export default defineComponent({
       })
     }
 
-    const multiplicaElementos = (elemento, index, arrayPercorrido) => {
+    const resolveEquacao = () => {
+      const equacao = form.value.equacao
+      descobreIncognita(equacao)
+      const [ladoE, ladoD] = equacao.split('=')
 
-      arrayPercorrido.forEach((elemento, index, array, arrayMultiplicativo) => {
-        if (array())
-      })
+      let elementosLadoE = ladoE.split(' ')
+      elementosLadoE = atribuiSinal(elementosLadoE)
+      console.log('vem assim do atribuiSinal', elementosLadoE)
+      elementosLadoE = multiplicaOuDivide(elementosLadoE, objIncognita.value.incognita)
+      console.log('vem assim do multiplicaOuDivide', elementosLadoE)
+      elementosLadoE = soma(elementosLadoE, objIncognita.value.incognita)
+      console.log('vem assim do soma', elementosLadoE)
 
-      arrayPercorrido.reduce((prev, cur) => {
-        if () {
+      let elementosLadoD = ladoD.split(' ')
+      elementosLadoD = atribuiSinal(elementosLadoD)
+      console.log('vem assim do atribuiSinal', elementosLadoD)
+      elementosLadoD = multiplicaOuDivide(elementosLadoD, objIncognita.value.incognita)
+      console.log('vem assim do multiplicaOuDivide', elementosLadoD)
+      elementosLadoD = soma(elementosLadoD, objIncognita.value.incognita)
+      console.log('vem assim do soma', elementosLadoD)
 
-        }
-      }, 0)
-
-
-      if (arrayPercorrido[index + 1] === '.') {
-        if (elemento.indexOf(objIncognita.value.incognita[0]) > -1) {
-          elemento = parseFloat(elemento) * parseFloat()
-        }
-      }
+      resultado.value = (parseFloat(elementosLadoD[0]) - parseFloat(elementosLadoE[0])) / (parseFloat(elementosLadoE[1]) - parseFloat(elementosLadoD[1]))
     }
 
     return {
       form,
-      resolveEquacao
+      resolveEquacao,
+      objIncognita
     }
   }
 })
