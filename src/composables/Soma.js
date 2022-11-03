@@ -6,11 +6,12 @@ export default function useSoma () {
     let somaSemIncognita = 0
     console.log(ladoDaEquacao)
     ladoDaEquacao.reduce((acc, cur) => {
-      console.log(cur)
-      if ((cur.toString()).indexOf(incognita) > -1) {
-        somaComIncognita = (parseFloat(somaComIncognita) + parseFloat(cur)) + incognita
-      } else {
-        somaSemIncognita += parseFloat(cur)
+      if (typeof cur !== typeof array) {
+        if ((cur.toString()).indexOf(incognita) > -1) {
+          somaComIncognita = (parseFloat(somaComIncognita) + parseFloat(cur)) + incognita
+        } else {
+          somaSemIncognita += parseFloat(cur)
+        }
       }
       if (typeof cur === typeof array) {
         cur.forEach((element) => {
@@ -25,6 +26,7 @@ export default function useSoma () {
       return acc
     }, 0)
 
+    console.log(ladoDaEquacao)
     ladoDaEquacao = [somaSemIncognita, somaComIncognita]
 
     return ladoDaEquacao

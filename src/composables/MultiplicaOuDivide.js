@@ -1,14 +1,14 @@
 
 export default function UseMultiplicaOuDivide () {
   const multiplicaOuDivide = (ladoDaEquacao, incognita) => {
-  // Primeiro tenho que validar se tem ponto, se n�o nem faz nada
+  // Primeiro tenho que validar se tem ponto, se nï¿½o nem faz nada
     if (ladoDaEquacao.indexOf('.') === -1 && ladoDaEquacao.indexOf('/') === -1) {
       return ladoDaEquacao
     }
 
     const Array = []
 
-    // Ok, tem ponto!!! Ent�o agora tem que multiplicar os elementos e ir trocando
+    // Ok, tem ponto!!! Entï¿½o agora tem que multiplicar os elementos e ir trocando
     ladoDaEquacao.forEach((element, index) => {
     // Caso o elemento anterior ao atual for um ponto, e o elemento atual nem o elemento antes do ponto for array
       if (ladoDaEquacao[index - 1] === '.' && typeof element !== typeof Array && typeof ladoDaEquacao[index - 2] !== typeof Array) {
@@ -89,7 +89,7 @@ export default function UseMultiplicaOuDivide () {
       // Caso o elemento anterior ao atual for um ponto, e o elemento atual nem o elemento antes do ponto for array
       if (ladoDaEquacao[index - 1] === '/' && typeof element !== typeof Array && typeof ladoDaEquacao[index - 2] !== typeof Array) {
         // Caso o elemento atual ou o elemento antes do ponto tiver incognita
-        if (element.indexOf(incognita) > -1 || (ladoDaEquacao[index - 2].toString()).indexOf(incognita) > -1) {
+        if ((element.indexOf(incognita) > -1 && (ladoDaEquacao[index - 2].toString()).indexOf(incognita) === -1) || (element.indexOf(incognita) === -1 && (ladoDaEquacao[index - 2].toString()).indexOf(incognita) > -1)) {
           const elementosDivididos = parseFloat(ladoDaEquacao[index - 2]) / parseFloat(element)
           ladoDaEquacao[index] = elementosDivididos + incognita
           ladoDaEquacao[index - 1] = ''
@@ -105,7 +105,7 @@ export default function UseMultiplicaOuDivide () {
       if (ladoDaEquacao[index - 1] === '/' && typeof ladoDaEquacao[index - 2] === typeof Array && typeof element !== typeof Array) {
         const arrayDistributiva = []
         ladoDaEquacao[index - 2].forEach((elementN, index) => {
-          if (elementN.indexOf(incognita) > -1) {
+          if ((elementN.indexOf(incognita) > -1 && (element.toString()).indexOf(incognita) === -1) || (elementN.indexOf(incognita) === -1 && (element.toString()).indexOf(incognita) > -1)) {
             const elementosDivididos = (parseFloat(elementN) / parseFloat(element)) + incognita
             arrayDistributiva.push(elementosDivididos)
           } else {

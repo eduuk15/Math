@@ -24,6 +24,26 @@
             {{ objIncognita.incognita[0] }}  =  {{ resultado }}
           </div>
         </q-form>
+        <div class="flex items-center justify-center">
+          <div class="absolute ml-12 bottom-12">
+            <h1 class="absolute left-0 bottom-16 text-[#e5e7eb] text-lg italic font-bold">COMO UTILIZAR?</h1>
+            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
+              1. Deixar um espaço entre cada número ou sinal;
+            </p>
+            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
+              2. "." para multiplicar; "/" para dividir;
+            </p>
+            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
+              3. "+" para somar; "-" para subtrair;
+            </p>
+            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
+              4. Chaves {}, Colchetes [] e Parenteses () podem ser utilizados;
+            </p>
+            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
+              5. Não multiplique elementos que possuem incógnita entre si; ;
+            </p>
+          </div>
+        </div>
     </div>
 
   </q-page>
