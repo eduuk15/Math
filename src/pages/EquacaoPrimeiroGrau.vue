@@ -76,18 +76,37 @@ export default defineComponent({
       const [ladoE, ladoD] = equacao.split('=')
 
       let elementosLadoE = ladoE.split(' ')
+      elementosLadoE.forEach((element, index) => {
+        if (element === objIncognita.value.incognita[0]) {
+          elementosLadoE[index] = '1' + element
+        }
+      })
       elementosLadoE = atribuiSinal(elementosLadoE)
       elementosLadoE = multiplicaOuDivide(elementosLadoE, objIncognita.value.incognita)
       elementosLadoE = soma(elementosLadoE, objIncognita.value.incognita)
 
       let elementosLadoD = ladoD.split(' ')
+      elementosLadoD.forEach((element, index) => {
+        if (element === objIncognita.value.incognita[0]) {
+          elementosLadoD[index] = '1' + element
+        }
+      })
+      console.log(elementosLadoD)
       elementosLadoD = atribuiSinal(elementosLadoD)
       elementosLadoD = multiplicaOuDivide(elementosLadoD, objIncognita.value.incognita)
       elementosLadoD = soma(elementosLadoD, objIncognita.value.incognita)
 
       resultado.value = (parseFloat(elementosLadoD[0]) - parseFloat(elementosLadoE[0])) / (parseFloat(elementosLadoE[1]) - parseFloat(elementosLadoD[1]))
 
-      if (resultado.value === Infinity) {
+      if (objIncognita.value.incognita.length > 1) {
+        objIncognita.value.incognita = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Só deve existir uma incógnita!')
+      } else if (!objIncognita.value.incognita.length) {
+        objIncognita.value.incognita = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Insira uma incógnita para resolver a equação!')
+      } else if (resultado.value === Infinity) {
         resultado.value = ''
         notifyError('Não é possível efetuar a operação!')
         notifyHint('O coeficiente da equação pode estar incorreto...')
