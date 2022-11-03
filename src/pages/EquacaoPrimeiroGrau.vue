@@ -31,7 +31,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-// import useNotify from 'src/composables/UseNotify'
+import useNotify from 'src/composables/UseNotify'
 import useSoma from 'src/composables/Soma'
 import useMultiplicaOuDivide from 'src/composables/MultiplicaOuDivide'
 import useAtribuiSinal from 'src/composables/AtribuiSinal'
@@ -39,7 +39,7 @@ import useAtribuiSinal from 'src/composables/AtribuiSinal'
 export default defineComponent({
   name: 'EquacaoPrimeiroGrauPage',
   setup () {
-    // const { notifyError, notifySuccess } = useNotify()
+    const { notifyError, notifySuccess, notifyHint } = useNotify()
     const { multiplicaOuDivide } = useMultiplicaOuDivide()
     const { soma } = useSoma()
     const { atribuiSinal } = useAtribuiSinal()
@@ -77,22 +77,26 @@ export default defineComponent({
 
       let elementosLadoE = ladoE.split(' ')
       elementosLadoE = atribuiSinal(elementosLadoE)
-      console.log('vem assim do atribuiSinal', elementosLadoE)
       elementosLadoE = multiplicaOuDivide(elementosLadoE, objIncognita.value.incognita)
-      console.log('vem assim do multiplicaOuDivide', elementosLadoE)
       elementosLadoE = soma(elementosLadoE, objIncognita.value.incognita)
-      console.log('vem assim do soma', elementosLadoE)
 
       let elementosLadoD = ladoD.split(' ')
       elementosLadoD = atribuiSinal(elementosLadoD)
-      console.log('vem assim do atribuiSinal', elementosLadoD)
       elementosLadoD = multiplicaOuDivide(elementosLadoD, objIncognita.value.incognita)
-      console.log('vem assim do multiplicaOuDivide', elementosLadoD)
       elementosLadoD = soma(elementosLadoD, objIncognita.value.incognita)
-      console.log('vem assim do soma', elementosLadoD)
 
       resultado.value = (parseFloat(elementosLadoD[0]) - parseFloat(elementosLadoE[0])) / (parseFloat(elementosLadoE[1]) - parseFloat(elementosLadoD[1]))
-      console.log(resultado.value)
+
+      if (resultado.value === Infinity) {
+        resultado.value = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('O coeficiente da equação pode estar incorreto...')
+      } else if (isNaN(resultado.value)) {
+        resultado.value = ''
+        notifyHint('Qualquer valor satisfaz a equação!')
+      } else {
+        notifySuccess('Equação resolvida com sucesso!')
+      }
     }
 
     return {

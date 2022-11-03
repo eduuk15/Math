@@ -16,8 +16,16 @@ export default function useNotify () {
     })
   }
 
+  const notifyHint = (message) => {
+    $q.notify({
+      type: 'info',
+      message: message || 'Checkout if everything is all right!'
+    })
+  }
+
   return {
     notifySuccess,
-    notifyError
+    notifyError,
+    notifyHint
   }
 }

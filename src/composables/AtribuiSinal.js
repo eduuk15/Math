@@ -3,7 +3,6 @@ export default function useAtribuiSinal () {
   const atribuiSinal = (ladoDaEquacao) => {
     const array = []
     if (typeof ladoDaEquacao === typeof array) {
-      console.log('ta aqui fedp')
       if (ladoDaEquacao.indexOf('+') === -1 && ladoDaEquacao.indexOf('-') === -1) {
         const itemVazio = ''
 
