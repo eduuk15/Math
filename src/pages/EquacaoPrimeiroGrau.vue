@@ -89,15 +89,11 @@ export default defineComponent({
       })
 
       elementosLadoE = atribuiSinal(elementosLadoE)
-      // console.log('chega assim do atribui sinal', elementosLadoE)
       elementosLadoE = resolveChaves(elementosLadoE)
       elementosLadoE = resolveColchetes(elementosLadoE)
       elementosLadoE = resolveParenteses(elementosLadoE)
-      // console.log('chega assim das resolucoes', elementosLadoE)
       elementosLadoE = multiplicaOuDivide(elementosLadoE, objIncognita.value.incognita)
-      // console.log('chega assim do mult e div', elementosLadoE)
       elementosLadoE = soma(elementosLadoE, objIncognita.value.incognita)
-      console.log('chega assim do soma', elementosLadoE)
 
       let elementosLadoD = ladoD.split(' ')
       elementosLadoD.forEach((element, index) => {
