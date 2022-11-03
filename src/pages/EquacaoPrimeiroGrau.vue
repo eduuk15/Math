@@ -92,12 +92,14 @@ export default defineComponent({
       console.log('vem assim do soma', elementosLadoD)
 
       resultado.value = (parseFloat(elementosLadoD[0]) - parseFloat(elementosLadoE[0])) / (parseFloat(elementosLadoE[1]) - parseFloat(elementosLadoD[1]))
+      console.log(resultado.value)
     }
 
     return {
       form,
       resolveEquacao,
-      objIncognita
+      objIncognita,
+      resultado
     }
   }
 })

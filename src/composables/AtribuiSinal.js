@@ -5,6 +5,14 @@ export default function useAtribuiSinal () {
     if (typeof ladoDaEquacao === typeof array) {
       console.log('ta aqui fedp')
       if (ladoDaEquacao.indexOf('+') === -1 && ladoDaEquacao.indexOf('-') === -1) {
+        const itemVazio = ''
+
+        let itensVazios = ladoDaEquacao.indexOf(itemVazio)
+
+        while (itensVazios >= 0) {
+          ladoDaEquacao.splice(itensVazios, 1)
+          itensVazios = ladoDaEquacao.indexOf(itemVazio)
+        }
         return ladoDaEquacao
       }
 
