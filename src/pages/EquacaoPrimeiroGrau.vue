@@ -32,24 +32,31 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import useNotify from 'src/composables/UseNotify'
+import useSoma from 'src/composables/Soma'
+import useMultiplicaOuDivide from 'src/composables/MultiplicaOuDivide'
+import useAtribuiSinal from 'src/composables/AtribuiSinal'
+import useResolveParenteses from 'src/composables/ResolveParenteses'
+import useResolveColchetes from 'src/composables/ResolveColchetes'
+import useResolveChaves from 'src/composables/ResolveChaves'
 
 export default defineComponent({
   name: 'EquacaoPrimeiroGrauPage',
   setup () {
-    const { notifyError, notifySuccess } = useNotify()
+    const { notifyError, notifySuccess, notifyHint } = useNotify()
+    const { multiplicaOuDivide } = useMultiplicaOuDivide()
+    const { soma } = useSoma()
+    const { atribuiSinal } = useAtribuiSinal()
+    const { resolveParenteses } = useResolveParenteses()
+    const { resolveColchetes } = useResolveColchetes()
+    const { resolveChaves } = useResolveChaves()
 
     const form = ref({
       equacao: ''
     })
 
-    const somaElementosSemIncognita = ref({
-      e: '',
-      d: ''
-    })
-
-    const somaElementosComIncognita = ref({
-      e: '',
-      d: ''
+    const objIncognita = ref({
+      temIncognita: false,
+      incognita: []
     })
 
     const resultado = ref('')
@@ -58,171 +65,6 @@ export default defineComponent({
       'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'w', 'x', 'y', 'z',
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z'
     ]
-
-    const objIncognita = ref({
-      temIncognita: false,
-      incognita: []
-    })
-
-    const erro = ref(true)
-
-    const resolveEquacao = () => {
-      resolveEquacaoParcial()
-      resultado.value = (
-        (somaElementosSemIncognita.value.d - somaElementosSemIncognita.value.e) /
-        (somaElementosComIncognita.value.e - somaElementosComIncognita.value.d)
-      )
-      if (isNaN(resultado.value)) {
-        notifyError('Não foi possível resolver a equação!')
-        return
-      }
-      if (!erro.value) {
-        notifySuccess('Equação resolvida com sucesso!')
-      }
-    }
-
-    const resolveEquacaoParcial = async () => {
-      try {
-        erro.value = true
-        const elementosComIncognitaE = []
-        const elementosSemIncognitaE = []
-
-        const elementosComIncognitaD = []
-        const elementosSemIncognitaD = []
-
-        const equacao = form.value.equacao
-        descobreIncognita(equacao)
-
-        if (equacao.indexOf('=') <= -1) {
-          notifyError('Insira o sinal de igualdade(=) para resolver a equação!')
-          return
-        }
-
-        const [ladoE, ladoD] = equacao.split('=')
-
-        if (ladoE === '' || ladoD === '') {
-          notifyError('Os dois "lados" da equação devem ser preenchidos!')
-          return
-        }
-
-        if (objIncognita.value.incognita.length > 1) {
-          notifyError('Só pode existir uma incógnita por equação!')
-          return
-        }
-
-        if (objIncognita.value.incognita.length === 0) {
-          notifyError('Insira uma incógnita na equação!')
-          return
-        }
-
-        const incognita = objIncognita.value.incognita
-
-        // --------------------------------------------- LADO ESQUERDO ------------------------------------------------------------------------
-
-        const elementosSemSinaisE = []
-        const elementosLadoE = ladoE.split(' ')
-
-        elementosLadoE.forEach((elemento, index, array) => {
-          if (elemento === '') {
-            array.splice(index, 1)
-          }
-        })
-
-        elementosLadoE.forEach((elemento, index, array) => {
-          descobreSinal(elemento, index, array, incognita[0], elementosSemSinaisE)
-        })
-
-        elementosSemSinaisE.forEach((elemento) => {
-          possuiIncognita(elemento, incognita[0], elementosComIncognitaE, elementosSemIncognitaE)
-        })
-
-        const somaElementosSemIncognitaE = elementosSemIncognitaE.reduce((prev, cur) => {
-          return parseFloat(prev) + parseFloat(cur)
-        }, 0)
-        somaElementosSemIncognita.value.e = somaElementosSemIncognitaE
-
-        const somaElementosComIncognitaE = elementosComIncognitaE.reduce((prev, cur) => {
-          if (cur === incognita[0]) {
-            cur = 1
-          }
-          if (cur === '-' + incognita[0]) {
-            cur = -1
-          }
-          return parseFloat(prev) + parseFloat(cur)
-        }, 0)
-        somaElementosComIncognita.value.e = somaElementosComIncognitaE
-
-        // -----------------------------------------------------------------------------------------------------------------------------------
-
-        // --------------------------------------------- LADO DIREITO ------------------------------------------------------------------------
-
-        const elementosSemSinaisD = []
-        const elementosLadoD = ladoD.split(' ')
-
-        elementosLadoD.forEach((elemento, index, array) => {
-          if (elemento === '') {
-            array.splice(index, 1)
-          }
-        })
-
-        elementosLadoD.forEach((elemento, index, array) => {
-          descobreSinal(elemento, index, array, incognita[0], elementosSemSinaisD)
-        })
-
-        elementosSemSinaisD.forEach((elemento) => {
-          possuiIncognita(elemento, incognita[0], elementosComIncognitaD, elementosSemIncognitaD)
-        })
-
-        const somaElementosSemIncognitaD = elementosSemIncognitaD.reduce((prev, cur) => {
-          return parseFloat(prev) + parseFloat(cur)
-        }, 0)
-        somaElementosSemIncognita.value.d = somaElementosSemIncognitaD
-
-        const somaElementosComIncognitaD = elementosComIncognitaD.reduce((prev, cur) => {
-          if (cur === incognita[0]) {
-            cur = 1
-          }
-          if (cur === '-' + incognita[0]) {
-            cur = -1
-          }
-          return parseFloat(prev) + parseFloat(cur)
-        }, 0)
-        somaElementosComIncognita.value.d = somaElementosComIncognitaD
-
-        // -----------------------------------------------------------------------------------------------------------------------------------
-
-        if (elementosLadoE[0] === '' || elementosLadoD[0] === '') {
-          notifyError('Os dois "lados" da equação devem ser preenchidos!')
-          return
-        }
-
-        erro.value = false
-      } catch (error) {
-        notifyError(error.message)
-      }
-    }
-
-    const possuiIncognita = (elemento, incognita, arrayComIncognita, arraySemIncognita) => {
-      if (elemento.indexOf(incognita) > -1) {
-        arrayComIncognita.push(elemento)
-      } else {
-        arraySemIncognita.push(elemento)
-      }
-    }
-
-    const descobreSinal = (elemento, index, arrayPercorrido, incognita, arraySemSinal) => {
-      if (elemento !== '+' && elemento !== '-') {
-        if (arrayPercorrido[index - 1] === '-') {
-          if (elemento.indexOf(incognita) > -1) {
-            arraySemSinal.push('-' + elemento)
-          } else {
-            arraySemSinal.push('-' + elemento)
-          }
-        } else {
-          arraySemSinal.push(elemento)
-        }
-      }
-    }
 
     const descobreIncognita = (string) => {
       objIncognita.value.incognita = []
@@ -234,11 +76,65 @@ export default defineComponent({
       })
     }
 
+    const resolveEquacao = () => {
+      const equacao = form.value.equacao
+      descobreIncognita(equacao)
+      const [ladoE, ladoD] = equacao.split('=')
+
+      let elementosLadoE = ladoE.split(' ')
+      elementosLadoE.forEach((element, index) => {
+        if (element === objIncognita.value.incognita[0]) {
+          elementosLadoE[index] = '1' + element
+        }
+      })
+
+      elementosLadoE = atribuiSinal(elementosLadoE)
+      elementosLadoE = resolveChaves(elementosLadoE)
+      elementosLadoE = resolveColchetes(elementosLadoE)
+      elementosLadoE = resolveParenteses(elementosLadoE)
+      elementosLadoE = multiplicaOuDivide(elementosLadoE, objIncognita.value.incognita)
+      elementosLadoE = soma(elementosLadoE, objIncognita.value.incognita)
+
+      let elementosLadoD = ladoD.split(' ')
+      elementosLadoD.forEach((element, index) => {
+        if (element === objIncognita.value.incognita[0]) {
+          elementosLadoD[index] = '1' + element
+        }
+      })
+      elementosLadoD = atribuiSinal(elementosLadoD)
+      elementosLadoD = resolveChaves(elementosLadoD)
+      elementosLadoD = resolveColchetes(elementosLadoD)
+      elementosLadoD = resolveParenteses(elementosLadoD)
+      elementosLadoD = multiplicaOuDivide(elementosLadoD, objIncognita.value.incognita)
+      elementosLadoD = soma(elementosLadoD, objIncognita.value.incognita)
+
+      resultado.value = (parseFloat(elementosLadoD[0]) - parseFloat(elementosLadoE[0])) / (parseFloat(elementosLadoE[1]) - parseFloat(elementosLadoD[1]))
+
+      if (objIncognita.value.incognita.length > 1) {
+        objIncognita.value.incognita = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Só deve existir uma incógnita!')
+      } else if (!objIncognita.value.incognita.length) {
+        objIncognita.value.incognita = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Insira uma incógnita para resolver a equação!')
+      } else if (resultado.value === Infinity) {
+        resultado.value = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('O coeficiente da equação pode estar incorreto...')
+      } else if (isNaN(resultado.value)) {
+        resultado.value = ''
+        notifyHint('Qualquer valor satisfaz a equação!')
+      } else {
+        notifySuccess('Equação resolvida com sucesso!')
+      }
+    }
+
     return {
       form,
       resolveEquacao,
-      resultado,
-      objIncognita
+      objIncognita,
+      resultado
     }
   }
 })
