@@ -3,7 +3,7 @@ export default function useAtribuiSinal () {
   const atribuiSinal = (ladoDaEquacao) => {
     const array = []
     if (typeof ladoDaEquacao === typeof array) {
-      if (ladoDaEquacao.indexOf('+') === -1 && ladoDaEquacao.indexOf('-') === -1) {
+      if (ladoDaEquacao.indexOf('+') === -1 && ladoDaEquacao.indexOf('-') === -1 && ladoDaEquacao.indexOf('–') === -1) {
         const itemVazio = ''
 
         let itensVazios = ladoDaEquacao.indexOf(itemVazio)
@@ -19,7 +19,7 @@ export default function useAtribuiSinal () {
         if (ladoDaEquacao[index - 1] === '+') {
           ladoDaEquacao[index - 1] = ''
         }
-        if (ladoDaEquacao[index - 1] === '-') {
+        if (ladoDaEquacao[index - 1] === '-' || ladoDaEquacao[index - 1] === '–') {
           ladoDaEquacao[index - 1] = ''
           ladoDaEquacao[index] = '-' + element
         }
