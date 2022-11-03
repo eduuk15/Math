@@ -35,6 +35,9 @@ import useNotify from 'src/composables/UseNotify'
 import useSoma from 'src/composables/Soma'
 import useMultiplicaOuDivide from 'src/composables/MultiplicaOuDivide'
 import useAtribuiSinal from 'src/composables/AtribuiSinal'
+import useResolveParenteses from 'src/composables/ResolveParenteses'
+import useResolveColchetes from 'src/composables/ResolveColchetes'
+import useResolveChaves from 'src/composables/ResolveChaves'
 
 export default defineComponent({
   name: 'EquacaoPrimeiroGrauPage',
@@ -43,6 +46,9 @@ export default defineComponent({
     const { multiplicaOuDivide } = useMultiplicaOuDivide()
     const { soma } = useSoma()
     const { atribuiSinal } = useAtribuiSinal()
+    const { resolveParenteses } = useResolveParenteses()
+    const { resolveColchetes } = useResolveColchetes()
+    const { resolveChaves } = useResolveChaves()
 
     const form = ref({
       equacao: ''
@@ -81,9 +87,17 @@ export default defineComponent({
           elementosLadoE[index] = '1' + element
         }
       })
+
       elementosLadoE = atribuiSinal(elementosLadoE)
+      // console.log('chega assim do atribui sinal', elementosLadoE)
+      elementosLadoE = resolveChaves(elementosLadoE)
+      elementosLadoE = resolveColchetes(elementosLadoE)
+      elementosLadoE = resolveParenteses(elementosLadoE)
+      // console.log('chega assim das resolucoes', elementosLadoE)
       elementosLadoE = multiplicaOuDivide(elementosLadoE, objIncognita.value.incognita)
+      // console.log('chega assim do mult e div', elementosLadoE)
       elementosLadoE = soma(elementosLadoE, objIncognita.value.incognita)
+      console.log('chega assim do soma', elementosLadoE)
 
       let elementosLadoD = ladoD.split(' ')
       elementosLadoD.forEach((element, index) => {
@@ -92,6 +106,9 @@ export default defineComponent({
         }
       })
       elementosLadoD = atribuiSinal(elementosLadoD)
+      elementosLadoD = resolveChaves(elementosLadoD)
+      elementosLadoD = resolveColchetes(elementosLadoD)
+      elementosLadoD = resolveParenteses(elementosLadoD)
       elementosLadoD = multiplicaOuDivide(elementosLadoD, objIncognita.value.incognita)
       elementosLadoD = soma(elementosLadoD, objIncognita.value.incognita)
 
