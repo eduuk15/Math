@@ -91,7 +91,6 @@ export default defineComponent({
           elementosLadoD[index] = '1' + element
         }
       })
-      console.log(elementosLadoD)
       elementosLadoD = atribuiSinal(elementosLadoD)
       elementosLadoD = multiplicaOuDivide(elementosLadoD, objIncognita.value.incognita)
       elementosLadoD = soma(elementosLadoD, objIncognita.value.incognita)

@@ -13,7 +13,7 @@ export default function UseMultiplicaOuDivide () {
     // Caso o elemento anterior ao atual for um ponto, e o elemento atual nem o elemento antes do ponto for array
       if (ladoDaEquacao[index - 1] === '.' && typeof element !== typeof Array && typeof ladoDaEquacao[index - 2] !== typeof Array) {
         // Caso o elemento atual ou o elemento antes do ponto tiver incognita
-        if (element.indexOf(incognita) > -1 || ladoDaEquacao[index - 2].indexOf(incognita) > -1) {
+        if (element.indexOf(incognita) > -1 || (ladoDaEquacao[index - 2].toString()).indexOf(incognita) > -1) {
           const elementosMultiplicados = parseFloat(element) * parseFloat(ladoDaEquacao[index - 2])
           ladoDaEquacao[index] = elementosMultiplicados + incognita
           ladoDaEquacao[index - 1] = ''

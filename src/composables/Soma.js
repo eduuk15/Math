@@ -4,7 +4,7 @@ export default function useSoma () {
     let somaComIncognita = 0
     let somaSemIncognita = 0
     ladoDaEquacao.reduce((acc, cur) => {
-      if (cur.indexOf(incognita) > -1) {
+      if ((cur.toString()).indexOf(incognita) > -1) {
         somaComIncognita = (parseFloat(somaComIncognita) + parseFloat(cur)) + incognita
       } else {
         somaSemIncognita += parseFloat(cur)
