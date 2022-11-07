@@ -1,12 +1,18 @@
+import useMultiplicaOuDivide from './MultiplicaOuDivide'
+import useSoma from './Soma'
 
 export default function useResolveChaves () {
-  const resolveChaves = (ladoDaEquacao) => {
+  const { multiplicaOuDivide } = useMultiplicaOuDivide()
+  const { soma } = useSoma()
+  const resolveChaves = (ladoDaEquacao, incognita) => {
     const array = []
     if (typeof ladoDaEquacao === typeof array) {
-      while (ladoDaEquacao.indexOf('[') > -1) {
+      while (ladoDaEquacao.indexOf('{') > -1) {
         ladoDaEquacao.forEach((element, index) => {
           if (element === '{') {
-            const arrayChavesResolvidos = ladoDaEquacao.slice(index + 1, ladoDaEquacao.indexOf('}'))
+            let arrayChavesResolvidos = ladoDaEquacao.slice(index + 1, ladoDaEquacao.indexOf('}'))
+            arrayChavesResolvidos = multiplicaOuDivide(arrayChavesResolvidos, incognita)
+            arrayChavesResolvidos = soma(arrayChavesResolvidos, incognita)
             ladoDaEquacao[index] = arrayChavesResolvidos
             let indexAbreChaves = index + 1
             const indexFechaChaves = ladoDaEquacao.indexOf('}')

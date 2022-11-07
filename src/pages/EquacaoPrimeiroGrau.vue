@@ -74,6 +74,11 @@ export default defineComponent({
       equacao: ''
     })
 
+    const elementos = ref({
+      elementosE: '',
+      elementosD: ''
+    })
+
     const objIncognita = ref({
       temIncognita: false,
       incognita: []
@@ -96,7 +101,7 @@ export default defineComponent({
       })
     }
 
-    const resolveEquacao = () => {
+    const resolveEquacaoParcial = () => {
       const equacao = form.value.equacao
       descobreIncognita(equacao)
       const [ladoE, ladoD] = equacao.split('=')
@@ -109,11 +114,17 @@ export default defineComponent({
       })
 
       elementosLadoE = atribuiSinal(elementosLadoE)
-      elementosLadoE = resolveChaves(elementosLadoE)
-      elementosLadoE = resolveColchetes(elementosLadoE)
-      elementosLadoE = resolveParenteses(elementosLadoE)
-      elementosLadoE = multiplicaOuDivide(elementosLadoE, objIncognita.value.incognita)
-      elementosLadoE = soma(elementosLadoE, objIncognita.value.incognita)
+
+      const elementosParentesesE = resolveParenteses(elementosLadoE, objIncognita.value.incognita)
+      // console.log('elementosParentesesE', JSON.stringify(elementosParentesesE))
+
+      const elementosColchetesE = resolveColchetes(elementosParentesesE, objIncognita.value.incognita)
+      // console.log('elementosColchetesE', JSON.stringify(elementosColchetesE))
+
+      const elementosChaveE = resolveChaves(elementosColchetesE, objIncognita.value.incognita)
+      // console.log('elementosChaveE', JSON.stringify(elementosChaveE))
+
+      elementos.value.elementosE = elementosChaveE
 
       let elementosLadoD = ladoD.split(' ')
       elementosLadoD.forEach((element, index) => {
@@ -121,14 +132,33 @@ export default defineComponent({
           elementosLadoD[index] = '1' + element
         }
       })
-      elementosLadoD = atribuiSinal(elementosLadoD)
-      elementosLadoD = resolveChaves(elementosLadoD)
-      elementosLadoD = resolveColchetes(elementosLadoD)
-      elementosLadoD = resolveParenteses(elementosLadoD)
-      elementosLadoD = multiplicaOuDivide(elementosLadoD, objIncognita.value.incognita)
-      elementosLadoD = soma(elementosLadoD, objIncognita.value.incognita)
 
-      resultado.value = (parseFloat(elementosLadoD[0]) - parseFloat(elementosLadoE[0])) / (parseFloat(elementosLadoE[1]) - parseFloat(elementosLadoD[1]))
+      elementosLadoD = atribuiSinal(elementosLadoD)
+
+      const elementosParentesesD = resolveParenteses(elementosLadoD, objIncognita.value.incognita)
+
+      const elementosColchetesD = resolveColchetes(elementosParentesesD, objIncognita.value.incognita)
+
+      const elementosChaveD = resolveChaves(elementosColchetesD, objIncognita.value.incognita)
+
+      elementos.value.elementosD = elementosChaveD
+    }
+
+    const resolveEquacao = () => {
+      resolveEquacaoParcial()
+      const elementosMultiplicadosDividosE = multiplicaOuDivide(elementos.value.elementosE, objIncognita.value.incognita)
+      // console.log('elementosMultiplicadosDividosE', JSON.stringify(elementosMultiplicadosDividosE))
+
+      const elementosSomadosE = soma(elementosMultiplicadosDividosE, objIncognita.value.incognita)
+      // console.log('elementosSomadosE', JSON.stringify(elementosSomadosE))
+
+      const elementosMultiplicadosDividosD = multiplicaOuDivide(elementos.value.elementosD, objIncognita.value.incognita)
+      const elementosSomadosD = soma(elementosMultiplicadosDividosD, objIncognita.value.incognita)
+
+      // console.log(elementosSomadosE)
+      // console.log(elementosSomadosD)
+
+      resultado.value = (parseFloat(elementosSomadosD[0]) - parseFloat(elementosSomadosE[0])) / (parseFloat(elementosSomadosE[1]) - parseFloat(elementosSomadosD[1]))
 
       if (objIncognita.value.incognita.length > 1) {
         objIncognita.value.incognita = ''

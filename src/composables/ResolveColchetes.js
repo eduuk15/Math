@@ -1,12 +1,18 @@
+import useMultiplicaOuDivide from './MultiplicaOuDivide'
+import useSoma from './Soma'
 
 export default function useResolveColchetes () {
-  const resolveColchetes = (ladoDaEquacao) => {
+  const { multiplicaOuDivide } = useMultiplicaOuDivide()
+  const { soma } = useSoma()
+  const resolveColchetes = (ladoDaEquacao, incognita) => {
     const array = []
     if (typeof ladoDaEquacao === typeof array) {
       while (ladoDaEquacao.indexOf('[') > -1) {
         ladoDaEquacao.forEach((element, index) => {
           if (element === '[') {
-            const arrayColchetesResolvidos = ladoDaEquacao.slice(index + 1, ladoDaEquacao.indexOf(']'))
+            let arrayColchetesResolvidos = ladoDaEquacao.slice(index + 1, ladoDaEquacao.indexOf(']'))
+            arrayColchetesResolvidos = multiplicaOuDivide(arrayColchetesResolvidos, incognita)
+            arrayColchetesResolvidos = soma(arrayColchetesResolvidos, incognita)
             ladoDaEquacao[index] = arrayColchetesResolvidos
             let indexAbreColchetes = index + 1
             const indexFechaColchetes = ladoDaEquacao.indexOf(']')

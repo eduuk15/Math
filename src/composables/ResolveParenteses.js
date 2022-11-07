@@ -1,12 +1,19 @@
 
+import useMultiplicaOuDivide from './MultiplicaOuDivide'
+import useSoma from './Soma'
+
 export default function useResolveParenteses () {
-  const resolveParenteses = (ladoDaEquacao) => {
+  const { multiplicaOuDivide } = useMultiplicaOuDivide()
+  const { soma } = useSoma()
+  const resolveParenteses = (ladoDaEquacao, incognita) => {
     const array = []
     if (typeof ladoDaEquacao === typeof array) {
       while (ladoDaEquacao.indexOf('(') > -1) {
         ladoDaEquacao.forEach((element, index) => {
           if (element === '(') {
-            const arrayParentesesResolvidos = ladoDaEquacao.slice(index + 1, ladoDaEquacao.indexOf(')'))
+            let arrayParentesesResolvidos = ladoDaEquacao.slice(index + 1, ladoDaEquacao.indexOf(')'))
+            arrayParentesesResolvidos = multiplicaOuDivide(arrayParentesesResolvidos, incognita)
+            arrayParentesesResolvidos = soma(arrayParentesesResolvidos, incognita)
             ladoDaEquacao[index] = arrayParentesesResolvidos
             let indexAbreParenteses = index + 1
             const indexFechaParenteses = ladoDaEquacao.indexOf(')')

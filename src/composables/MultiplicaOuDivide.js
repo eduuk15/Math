@@ -10,10 +10,11 @@ export default function UseMultiplicaOuDivide () {
 
     // Ok, tem ponto!!! Entï¿½o agora tem que multiplicar os elementos e ir trocando
     ladoDaEquacao.forEach((element, index) => {
-    // Caso o elemento anterior ao atual for um ponto, e o elemento atual nem o elemento antes do ponto for array
+      // console.log('1 IF')
+      // Caso o elemento anterior ao atual for um ponto, e o elemento atual nem o elemento antes do ponto for array
       if (ladoDaEquacao[index - 1] === '.' && typeof element !== typeof Array && typeof ladoDaEquacao[index - 2] !== typeof Array) {
         // Caso o elemento atual ou o elemento antes do ponto tiver incognita
-        if (element.indexOf(incognita) > -1 || (ladoDaEquacao[index - 2].toString()).indexOf(incognita) > -1) {
+        if ((element.toString()).indexOf(incognita) > -1 || (ladoDaEquacao[index - 2].toString()).indexOf(incognita) > -1) {
           const elementosMultiplicados = parseFloat(element) * parseFloat(ladoDaEquacao[index - 2])
           ladoDaEquacao[index] = elementosMultiplicados + incognita
           ladoDaEquacao[index - 1] = ''
@@ -27,10 +28,12 @@ export default function UseMultiplicaOuDivide () {
       }
 
       if (ladoDaEquacao[index - 1] === '.' && typeof element === typeof Array && typeof ladoDaEquacao[index - 2] !== typeof Array) {
+        // console.log('2 IF')
+
         const i = ladoDaEquacao[index - 2]
         const arrayDistributiva = []
         element.forEach((elementN, index) => {
-          if (elementN.indexOf(incognita) > -1) {
+          if ((elementN.toString()).indexOf(incognita) > -1 || (i.toString()).indexOf(incognita) > -1) {
             const elementosMultiplicados = (parseFloat(elementN) * parseFloat(i)) + incognita
             arrayDistributiva.push(elementosMultiplicados)
           } else {
@@ -44,6 +47,8 @@ export default function UseMultiplicaOuDivide () {
       }
 
       if (ladoDaEquacao[index - 1] === '.' && typeof ladoDaEquacao[index - 2] === typeof Array && typeof element !== typeof Array) {
+        // console.log('3 IF')
+
         const arrayDistributiva = []
         ladoDaEquacao[index - 2].forEach((elementN, index) => {
           if (elementN.indexOf(incognita) > -1) {
@@ -60,6 +65,8 @@ export default function UseMultiplicaOuDivide () {
       }
 
       if (ladoDaEquacao[index - 1] === '.' && typeof ladoDaEquacao[index - 2] === typeof Array && typeof element === typeof Array) {
+        // console.log('4 IF')
+
         const arrayDistributiva = []
         ladoDaEquacao[index - 2].forEach((elementN, index) => {
           if (elementN.indexOf(incognita) > -1) {
@@ -105,7 +112,7 @@ export default function UseMultiplicaOuDivide () {
       if (ladoDaEquacao[index - 1] === '/' && typeof ladoDaEquacao[index - 2] === typeof Array && typeof element !== typeof Array) {
         const arrayDistributiva = []
         ladoDaEquacao[index - 2].forEach((elementN, index) => {
-          if ((elementN.indexOf(incognita) > -1 && (element.toString()).indexOf(incognita) === -1) || (elementN.indexOf(incognita) === -1 && (element.toString()).indexOf(incognita) > -1)) {
+          if (((elementN.toString()).indexOf(incognita) > -1 && (element.toString()).indexOf(incognita) === -1) || ((elementN.toString()).indexOf(incognita) === -1 && (element.toString()).indexOf(incognita) > -1)) {
             const elementosDivididos = (parseFloat(elementN) / parseFloat(element)) + incognita
             arrayDistributiva.push(elementosDivididos)
           } else {
