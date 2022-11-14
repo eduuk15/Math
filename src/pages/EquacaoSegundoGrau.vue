@@ -43,6 +43,9 @@
         <p>
           4. Chaves {}, Colchetes [] e Parenteses () podem ser utilizados;
         </p>
+        <p>
+          5. Para elevar uma incógnita ao quadrado -> ALT GR + 2;
+        </p>
       </div>
     </div>
 
