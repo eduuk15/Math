@@ -15,9 +15,9 @@ export default function UseMultiplicaOuDivide () {
       if (ladoDaEquacao[index - 1] === '.' && typeof element !== typeof Array && typeof ladoDaEquacao[index - 2] !== typeof Array) {
         // Caso o elemento atual ou o elemento antes do ponto tiver incognita
         if ((element.toString()).indexOf(incognita) > -1 || (ladoDaEquacao[index - 2].toString()).indexOf(incognita) > -1) {
-          if ((element.toString()).indexOf(`${incognita}深) > -1 || (ladoDaEquacao[index - 2].toString()).indexOf(`${incognita}深) > -1) {
+          if ((element.toString()).indexOf(`${incognita}簡`) > -1 || (ladoDaEquacao[index - 2].toString()).indexOf(`${incognita}簡`) > -1) {
             const elementosQuadraticosMultiplicaodos = parseFloat(element) * parseFloat(ladoDaEquacao[index - 2])
-            ladoDaEquacao[index] = `${elementosQuadraticosMultiplicaodos}${incognita}深
+            ladoDaEquacao[index] = `${elementosQuadraticosMultiplicaodos}${incognita}簡`
             ladoDaEquacao[index - 1] = ''
             ladoDaEquacao[index - 2] = ''
           } else {
@@ -41,9 +41,9 @@ export default function UseMultiplicaOuDivide () {
         const arrayDistributiva = []
         element.forEach((elementN, index) => {
           if ((elementN.toString()).indexOf(incognita) > -1 || (i.toString()).indexOf(incognita) > -1) {
-            if ((elementN.toString()).indexOf(`${incognita}深) > -1 || (i.toString()).indexOf(`${incognita}深) > -1) {
+            if ((elementN.toString()).indexOf(`${incognita}簡`) > -1 || (i.toString()).indexOf(`${incognita}簡`) > -1) {
               const elementosQuadraticosMultiplicaodos = parseFloat(elementN) * parseFloat(i)
-              const elementosQuadraticosMultiplicadosString = `${elementosQuadraticosMultiplicaodos}${incognita}深
+              const elementosQuadraticosMultiplicadosString = `${elementosQuadraticosMultiplicaodos}${incognita}簡`
               arrayDistributiva.push(elementosQuadraticosMultiplicadosString)
             } else {
               const elementosMultiplicados = (parseFloat(elementN) * parseFloat(i)) + incognita
@@ -65,9 +65,9 @@ export default function UseMultiplicaOuDivide () {
         const arrayDistributiva = []
         ladoDaEquacao[index - 2].forEach((elementN, index) => {
           if (elementN.indexOf(incognita) > -1) {
-            if ((elementN.toString()).indexOf(`${incognita}深) > -1) {
+            if ((elementN.toString()).indexOf(`${incognita}簡`) > -1) {
               const elementosQuadraticosMultiplicaodos = parseFloat(elementN) * parseFloat(element)
-              const elementosQuadraticosMultiplicadosString = `${elementosQuadraticosMultiplicaodos}${incognita}深
+              const elementosQuadraticosMultiplicadosString = `${elementosQuadraticosMultiplicaodos}${incognita}簡`
               arrayDistributiva.push(elementosQuadraticosMultiplicadosString)
             } else {
               const elementosMultiplicados = (parseFloat(elementN) * parseFloat(element)) + incognita
@@ -116,14 +116,14 @@ export default function UseMultiplicaOuDivide () {
       if (ladoDaEquacao[index - 1] === '/' && typeof element !== typeof Array && typeof ladoDaEquacao[index - 2] !== typeof Array) {
         // Caso o elemento atual ou o elemento antes do ponto tiver incognita
         if (((element.indexOf(incognita) > -1 && (ladoDaEquacao[index - 2].toString()).indexOf(incognita) === -1) || (element.indexOf(incognita) === -1 && (ladoDaEquacao[index - 2].toString()).indexOf(incognita) > -1)) ||
-        (element.indexOf(incognita) > -1 && (ladoDaEquacao[index - 2].toString()).indexOf(`${incognita}深) === -1 && element.indexOf(`${incognita}深) === -1)) {
+        (element.indexOf(incognita) > -1 && (ladoDaEquacao[index - 2].toString()).indexOf(`${incognita}簡`) === -1 && element.indexOf(`${incognita}簡`) === -1)) {
           const elementosDivididos = parseFloat(ladoDaEquacao[index - 2]) / parseFloat(element)
           ladoDaEquacao[index] = elementosDivididos + incognita
           ladoDaEquacao[index - 1] = ''
           ladoDaEquacao[index - 2] = ''
-        } else if ((element.indexOf(incognita) === -1 && (ladoDaEquacao[index - 2].toString()).indexOf(`${incognita}深))) {
+        } else if ((element.indexOf(incognita) === -1 && (ladoDaEquacao[index - 2].toString()).indexOf(`${incognita}簡`))) {
           const elementosDivididos = parseFloat(ladoDaEquacao[index - 2]) / parseFloat(element)
-          const elementosDivididosStr = `${elementosDivididos}${incognita}深
+          const elementosDivididosStr = `${elementosDivididos}${incognita}簡`
           ladoDaEquacao[index] = elementosDivididosStr
           ladoDaEquacao[index - 1] = ''
           ladoDaEquacao[index - 2] = ''
@@ -139,12 +139,12 @@ export default function UseMultiplicaOuDivide () {
         const arrayDistributiva = []
         ladoDaEquacao[index - 2].forEach((elementN, index) => {
           if ((((elementN.toString()).indexOf(incognita) > -1 && (element.toString()).indexOf(incognita) === -1) || ((elementN.toString()).indexOf(incognita) === -1 && (element.toString()).indexOf(incognita) > -1)) ||
-          ((elementN.toString()).indexOf(`${incognita}深) > -1 && (element.toString()).indexOf(`${incognita}深) === -1) || ((elementN.toString()).indexOf(`${incognita}深) === -1 && (element.toString()).indexOf(`${incognita}深) > -1)) {
+          ((elementN.toString()).indexOf(`${incognita}簡`) > -1 && (element.toString()).indexOf(`${incognita}簡`) === -1) || ((elementN.toString()).indexOf(`${incognita}簡`) === -1 && (element.toString()).indexOf(`${incognita}簡`) > -1)) {
             const elementosDivididos = (parseFloat(elementN) / parseFloat(element)) + incognita
             arrayDistributiva.push(elementosDivididos)
-          } else if (((elementN.toString()).indexOf(`${incognita}深) > -1 && (element.toString()).indexOf(incognita) === -1) || ((elementN.toString()).indexOf(incognita) === -1 && (element.toString()).indexOf(`${incognita}深) > -1)) {
+          } else if (((elementN.toString()).indexOf(`${incognita}簡`) > -1 && (element.toString()).indexOf(incognita) === -1) || ((elementN.toString()).indexOf(incognita) === -1 && (element.toString()).indexOf(`${incognita}簡`) > -1)) {
             const elementosDivididos = (parseFloat(elementN) / parseFloat(element))
-            const elementosDivididosStr = `${elementosDivididos}${incognita}深
+            const elementosDivididosStr = `${elementosDivididos}${incognita}簡`
             arrayDistributiva.push(elementosDivididosStr)
           } else {
             const elementosDivididos = parseFloat(elementN) / parseFloat(element)

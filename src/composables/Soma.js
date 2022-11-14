@@ -6,7 +6,6 @@ export default function useSoma () {
     let somaSemIncognita = 0
     let somaComIncognitaQuadratica = 0
     const incognitaAoQuadro = `${incognita[0]}²`
-    console.log(incognitaAoQuadro)
     if (typeof ladoDaEquacao === typeof array) {
       ladoDaEquacao.reduce((acc, cur) => {
         if (typeof cur !== typeof array) {
