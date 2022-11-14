@@ -1,5 +1,5 @@
 <template>
-  <q-page class="relative bg-[#1f2937]">
+  <q-page class="bg-[#1f2937]">
     <div class="flex items-center justify-center">
         <q-form class="mt-12" @submit.prevent="resolveEquacao">
           <q-input
