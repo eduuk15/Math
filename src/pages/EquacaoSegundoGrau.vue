@@ -1,46 +1,49 @@
 <template>
-  <q-page class="relative bg-[#1f2937]">
+  <q-page class="bg-[#1f2937]">
     <div class="flex items-center justify-center">
-        <q-form class="absolute top-32" @submit.prevent="resolveEquacao">
+        <q-form class="mt-12" @submit.prevent="resolveEquacao">
           <q-input
             label-color="[#e5e7eb]"
             input-class="text-center w-80 text-[#e5e7eb]"
             label="Equação do 2º grau"
             v-model="form.equacao"
             lazy-rules
-            :rules="[val => (val && val.length > 0) || '� obrigat�rio inserir uma equa��o!']"
+            :rules="[val => (val && val.length > 0) || 'É obrigatório inserir uma equação!']"
             item-aligned
           />
 
-        <div class="flex items-center justify-center mt-8">
-          <q-btn
-            class="w-2/3 bg-[#1e3a8a] text-[#e5e7eb]"
-            label="Resolver!"
-            type="submit"
-          />
-        </div>
+          <div class="flex items-center justify-center mt-8">
+              <q-btn
+                class="w-2/3 bg-[#1e3a8a] text-[#e5e7eb]"
+                label="Resolver!"
+                type="submit"
+              />
+          </div>
 
-          <div class="flex items-center justify-center mt-16 text-[#e5e7eb] text-lg" v-if="resultado !== '' && objIncognita.incognita[0]">
-            {{ objIncognita.incognita[0] }}  =  {{ resultado }}
+          <div class="flex items-center justify-center mt-16 text-[#e5e7eb] text-lg" v-if="resultados.res1 !== '' && resultados.res2 !== '' && incognita[0]">
+            <div>
+              <p>{{ incognita[0] }}<sup>I</sup> = {{ resultados.res1 }}</p>
+              <p>{{ incognita[0] }}<sup>II</sup> = {{ resultados.res2 }}</p>
+            </div>
           </div>
         </q-form>
-        <div class="flex items-center justify-center">
-          <div class="absolute ml-12 bottom-12">
-            <h1 class="absolute left-0 bottom-16 text-[#e5e7eb] text-lg italic font-bold">COMO UTILIZAR?</h1>
-            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
-              1. Deixar um espaço entre cada número ou sinal;
-            </p>
-            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
-              2. "." para multiplicar; "/" para dividir;
-            </p>
-            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
-              3. "+" para somar; "-" para subtrair;
-            </p>
-            <p class="flex items-center justify-left ml-48 text-[#e5e7eb] text-lg italic">
-              4. Chaves {}, Colchetes [] e Parenteses () podem ser utilizados;
-            </p>
-          </div>
-        </div>
+    </div>
+    <div class="flex items-center justify-center mt-36 text-[#e5e7eb] text-lg italic">
+      <h1 class="font-bold">COMO UTILIZAR?</h1>
+      <div class="ml-4 items-center justify-center">
+        <p>
+          1. Deixar um espaço entre cada número ou sinal;
+        </p>
+        <p>
+          2. "." para multiplicar; "/" para dividir;
+        </p>
+        <p>
+          3. "+" para somar; "-" para subtrair;
+        </p>
+        <p>
+          4. Chaves {}, Colchetes [] e Parenteses () podem ser utilizados;
+        </p>
+      </div>
     </div>
 
   </q-page>
@@ -76,12 +79,24 @@ export default defineComponent({
       elementosD: ''
     })
 
-    const objIncognita = ref({
-      temIncognita: false,
-      incognita: []
+    const incognita = ref(
+      []
+    )
+
+    const elementosSegundoGrau = ref({
+      a: '',
+      b: '',
+      c: ''
     })
 
-    const resultado = ref('')
+    const igualdade = ref('')
+
+    const resultados = ref({
+      res1: '',
+      res2: ''
+    })
+
+    const equacaoInvalida = ref(false)
 
     const alfabeto = [
       'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -89,99 +104,114 @@ export default defineComponent({
     ]
 
     const descobreIncognita = (string) => {
-      objIncognita.value.incognita = []
+      incognita.value = []
       alfabeto.forEach((letra) => {
         if (string.indexOf(letra) > -1) {
-          objIncognita.value.temIncognita = true
-          objIncognita.value.incognita.push(letra)
+          incognita.value.push(letra)
         }
       })
     }
 
     const resolveEquacaoParcial = () => {
       const equacao = form.value.equacao
+
       descobreIncognita(equacao)
+      if (incognita.value.length > 1) {
+        incognita.value = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Só deve existir uma incógnita!')
+        return
+      }
+      if (!incognita.value.length) {
+        incognita.value = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Insira uma incógnita para resolver a equação!')
+        return
+      }
+
+      if (equacao.indexOf('=') === -1) {
+        equacaoInvalida.value = true
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Insira o sinal de igual(=) para resolver a equação!')
+        return
+      }
       const [ladoE, ladoD] = equacao.split('=')
 
       let elementosLadoE = ladoE.split(' ')
       elementosLadoE.forEach((element, index) => {
-        if (element === objIncognita.value.incognita[0]) {
+        if (element === incognita.value[0]) {
+          elementosLadoE[index] = '1' + element
+        }
+        if (element === `${incognita.value[0]}²`) {
           elementosLadoE[index] = '1' + element
         }
       })
-
       elementosLadoE = atribuiSinal(elementosLadoE)
-
-      const elementosParentesesE = resolveParenteses(elementosLadoE, objIncognita.value.incognita)
-      // console.log('elementosParentesesE', JSON.stringify(elementosParentesesE))
-
-      const elementosColchetesE = resolveColchetes(elementosParentesesE, objIncognita.value.incognita)
-      // console.log('elementosColchetesE', JSON.stringify(elementosColchetesE))
-
-      const elementosChaveE = resolveChaves(elementosColchetesE, objIncognita.value.incognita)
-      // console.log('elementosChaveE', JSON.stringify(elementosChaveE))
-
+      const elementosParentesesE = resolveParenteses(elementosLadoE, incognita.value)
+      const elementosColchetesE = resolveColchetes(elementosParentesesE, incognita.value)
+      const elementosChaveE = resolveChaves(elementosColchetesE, incognita.value)
       elementos.value.elementosE = elementosChaveE
 
       let elementosLadoD = ladoD.split(' ')
       elementosLadoD.forEach((element, index) => {
-        if (element === objIncognita.value.incognita[0]) {
+        if (element === incognita.value[0]) {
+          elementosLadoD[index] = '1' + element
+        }
+        if (element === `${incognita.value[0]}²`) {
           elementosLadoD[index] = '1' + element
         }
       })
-
       elementosLadoD = atribuiSinal(elementosLadoD)
-
-      const elementosParentesesD = resolveParenteses(elementosLadoD, objIncognita.value.incognita)
-
-      const elementosColchetesD = resolveColchetes(elementosParentesesD, objIncognita.value.incognita)
-
-      const elementosChaveD = resolveChaves(elementosColchetesD, objIncognita.value.incognita)
-
+      const elementosParentesesD = resolveParenteses(elementosLadoD, incognita.value)
+      const elementosColchetesD = resolveColchetes(elementosParentesesD, incognita.value)
+      const elementosChaveD = resolveChaves(elementosColchetesD, incognita.value)
       elementos.value.elementosD = elementosChaveD
     }
 
     const resolveEquacao = () => {
       resolveEquacaoParcial()
-      const elementosMultiplicadosDividosE = multiplicaOuDivide(elementos.value.elementosE, objIncognita.value.incognita)
-      // console.log('elementosMultiplicadosDividosE', JSON.stringify(elementosMultiplicadosDividosE))
-
-      const elementosSomadosE = soma(elementosMultiplicadosDividosE, objIncognita.value.incognita)
-      // console.log('elementosSomadosE', JSON.stringify(elementosSomadosE))
-
-      const elementosMultiplicadosDividosD = multiplicaOuDivide(elementos.value.elementosD, objIncognita.value.incognita)
-      const elementosSomadosD = soma(elementosMultiplicadosDividosD, objIncognita.value.incognita)
-
-      // console.log(elementosSomadosE)
-      // console.log(elementosSomadosD)
-
-      resultado.value = (parseFloat(elementosSomadosD[0]) - parseFloat(elementosSomadosE[0])) / (parseFloat(elementosSomadosE[1]) - parseFloat(elementosSomadosD[1]))
-
-      if (objIncognita.value.incognita.length > 1) {
-        objIncognita.value.incognita = ''
-        notifyError('N�o � poss�vel efetuar a opera��o!')
-        notifyHint('S� deve existir uma inc�gnita!')
-      } else if (!objIncognita.value.incognita.length) {
-        objIncognita.value.incognita = ''
-        notifyError('N�o � poss�vel efetuar a opera��o!')
-        notifyHint('Insira uma inc�gnita para resolver a equa��o!')
-      } else if (resultado.value === Infinity) {
-        resultado.value = ''
-        notifyError('N�o � poss�vel efetuar a opera��o!')
-        notifyHint('O coeficiente da equa��o pode estar incorreto...')
-      } else if (isNaN(resultado.value)) {
-        resultado.value = ''
-        notifyHint('Qualquer valor satisfaz a equa��o!')
-      } else {
-        notifySuccess('Equa��o resolvida com sucesso!')
+      if (equacaoInvalida.value) {
+        return
       }
+      const elementosMultiplicadosDividosE = multiplicaOuDivide(elementos.value.elementosE, incognita.value)
+      const elementosSomadosE = soma(elementosMultiplicadosDividosE, incognita.value)
+
+      const elementosMultiplicadosDividosD = multiplicaOuDivide(elementos.value.elementosD, incognita.value)
+      const elementosSomadosD = soma(elementosMultiplicadosDividosD, incognita.value)
+
+      igualdade.value = [parseFloat(elementosSomadosE[2]) - parseFloat(elementosSomadosD[2]), parseFloat(elementosSomadosE[1]) - parseFloat(elementosSomadosD[1]), parseFloat(elementosSomadosE[0]) - parseFloat(elementosSomadosD[0])]
+
+      if (igualdade.value[0] === 0 && igualdade.value[1] === 0 && igualdade.value[2] === 0) {
+        notifyHint('Qualquer valor satisfaz a equação!')
+        return
+      }
+
+      elementosSegundoGrau.value.a = igualdade.value[0]
+      elementosSegundoGrau.value.b = igualdade.value[1]
+      elementosSegundoGrau.value.c = igualdade.value[2]
+
+      console.log(elementosSegundoGrau.value)
+
+      const delta = ref((elementosSegundoGrau.value.b * elementosSegundoGrau.value.b) + (-4 * elementosSegundoGrau.value.a * elementosSegundoGrau.value.c))
+      if (delta.value < 0) {
+        let deltaSobreDoisA = Math.sqrt(delta.value * -1) / (2 * elementosSegundoGrau.value.a)
+        if (deltaSobreDoisA === 1) {
+          deltaSobreDoisA = ''
+        }
+        resultados.value.res1 = `${(-1 * elementosSegundoGrau.value.b) / (2 * elementosSegundoGrau.value.a)} + ${deltaSobreDoisA}i`
+        resultados.value.res2 = `${(-1 * elementosSegundoGrau.value.b) / (2 * elementosSegundoGrau.value.a)} - ${deltaSobreDoisA}i`
+      } else {
+        resultados.value.res1 = ((-1 * elementosSegundoGrau.value.b) + Math.sqrt(delta.value)) / (2 * elementosSegundoGrau.value.a)
+        resultados.value.res2 = ((-1 * elementosSegundoGrau.value.b) - Math.sqrt(delta.value)) / (2 * elementosSegundoGrau.value.a)
+      }
+      notifySuccess('Equação resolvida com sucesso!')
     }
 
     return {
       form,
       resolveEquacao,
-      objIncognita,
-      resultado
+      incognita,
+      resultados
     }
   }
 })
