@@ -82,6 +82,8 @@ export default defineComponent({
 
     const resultado = ref('')
 
+    const equacaoInvalida = ref(false)
+
     const alfabeto = [
       'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'w', 'x', 'y', 'z',
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'U', 'V', 'W', 'X', 'Y', 'Z'
@@ -99,6 +101,25 @@ export default defineComponent({
     const resolveEquacaoParcial = () => {
       const equacao = form.value.equacao
       descobreIncognita(equacao)
+      if (incognita.value.length > 1) {
+        incognita.value = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Só deve existir uma incógnita!')
+        return
+      }
+      if (!incognita.value.length) {
+        incognita.value = ''
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Insira uma incógnita para resolver a equação!')
+        return
+      }
+
+      if (equacao.indexOf('=') === -1) {
+        equacaoInvalida.value = true
+        notifyError('Não é possível efetuar a operação!')
+        notifyHint('Insira o sinal de igual(=) para resolver a equação!')
+        return
+      }
       const [ladoE, ladoD] = equacao.split('=')
 
       let elementosLadoE = ladoE.split(' ')
@@ -109,16 +130,9 @@ export default defineComponent({
       })
 
       elementosLadoE = atribuiSinal(elementosLadoE)
-
       const elementosParentesesE = resolveParenteses(elementosLadoE, incognita.value)
-      // console.log('elementosParentesesE', JSON.stringify(elementosParentesesE))
-
       const elementosColchetesE = resolveColchetes(elementosParentesesE, incognita.value)
-      // console.log('elementosColchetesE', JSON.stringify(elementosColchetesE))
-
       const elementosChaveE = resolveChaves(elementosColchetesE, incognita.value)
-      // console.log('elementosChaveE', JSON.stringify(elementosChaveE))
-
       elementos.value.elementosE = elementosChaveE
 
       let elementosLadoD = ladoD.split(' ')
@@ -127,49 +141,34 @@ export default defineComponent({
           elementosLadoD[index] = '1' + element
         }
       })
-
       elementosLadoD = atribuiSinal(elementosLadoD)
-
       const elementosParentesesD = resolveParenteses(elementosLadoD, incognita.value)
-
       const elementosColchetesD = resolveColchetes(elementosParentesesD, incognita.value)
-
       const elementosChaveD = resolveChaves(elementosColchetesD, incognita.value)
-
       elementos.value.elementosD = elementosChaveD
     }
 
     const resolveEquacao = () => {
       resolveEquacaoParcial()
+      if (equacaoInvalida.value) {
+        return
+      }
       const elementosMultiplicadosDividosE = multiplicaOuDivide(elementos.value.elementosE, incognita.value)
-      // console.log('elementosMultiplicadosDividosE', JSON.stringify(elementosMultiplicadosDividosE))
-
       const elementosSomadosE = soma(elementosMultiplicadosDividosE, incognita.value)
-      // console.log('elementosSomadosE', JSON.stringify(elementosSomadosE))
 
       const elementosMultiplicadosDividosD = multiplicaOuDivide(elementos.value.elementosD, incognita.value)
       const elementosSomadosD = soma(elementosMultiplicadosDividosD, incognita.value)
 
-      // console.log(elementosSomadosE)
-      // console.log(elementosSomadosD)
+      if (elementosSomadosE === elementosSomadosD) {
+        notifyHint('Qualquer valor satisfaz a equação!')
+        return
+      }
 
       resultado.value = (parseFloat(elementosSomadosD[0]) - parseFloat(elementosSomadosE[0])) / (parseFloat(elementosSomadosE[1]) - parseFloat(elementosSomadosD[1]))
 
-      if (incognita.value.length > 1) {
-        incognita.value = ''
-        notifyError('Não é possível efetuar a operação!')
-        notifyHint('Só deve existir uma incógnita!')
-      } else if (!incognita.value.length) {
-        incognita.value = ''
-        notifyError('Não é possível efetuar a operação!')
-        notifyHint('Insira uma incógnita para resolver a equação!')
-      } else if (resultado.value === Infinity) {
+      if (resultado.value === Infinity) {
         resultado.value = ''
         notifyError('Não é possível efetuar a operação!')
-        notifyHint('O coeficiente da equação pode estar incorreto...')
-      } else if (isNaN(resultado.value)) {
-        resultado.value = ''
-        notifyHint('Qualquer valor satisfaz a equação!')
       } else {
         notifySuccess('Equação resolvida com sucesso!')
       }
